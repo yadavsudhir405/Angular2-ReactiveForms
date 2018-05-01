@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Customer} from "./customer";
 
 @Component({
@@ -16,9 +16,11 @@ export class CustomerComponent implements OnInit {
 
     ngOnInit(): void {
         this.customerForm = this.fb.group({
-            firstName: '',
-            lastName: {value: '', disabled: true},
-            email: '',
+            firstName: ['',[Validators.required, Validators.minLength(3)]],
+            lastName: ['',[Validators.required, Validators.maxLength(50)]],
+            email: ['',[ Validators.required, Validators.pattern('[a-z]+@gmail.com')]],
+            phone:'',
+            notification:'email',
             sendCatalog: true
         });
     }
@@ -30,6 +32,16 @@ export class CustomerComponent implements OnInit {
             // email: "adfas@gmail.com",
             sendCatalog: true
         });
+    }
+
+    setNotification(notificationVia: String ): void {
+        const phoneControl = this.customerForm.get('phone');
+        if(notificationVia === "text"){
+            phoneControl.setValidators([Validators.required]);
+        }else{
+         phoneControl.clearValidators();
+        }
+        phoneControl.updateValueAndValidity();
     }
 
     save() {
