@@ -14,3 +14,7 @@ bower_components
 bin
 obj
 packages
+vcs.xml
+.idea
+Angular2-ReactiveForms.iml
+CHANGELOG.md
