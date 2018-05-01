@@ -32,8 +32,12 @@ function emailChecker(c: AbstractControl ):{[key:string]: boolean } | null {
 })
 export class CustomerComponent implements OnInit {
     customerForm: FormGroup;
+    emailValidationMessage: string;
     customer = new Customer();
-
+    private validationMessages = {
+        required: 'Please enter your email address',
+        pattern: 'Please enter valid email address'
+    };
 
     constructor(private fb: FormBuilder ) {
     }
@@ -54,16 +58,19 @@ export class CustomerComponent implements OnInit {
 
         this.customerForm.get('notification').valueChanges.subscribe(
             value => {
-                console.log(value);
+                this.setNotification(value);
             }
         );
+        const emailControl = this.customerForm.get('emailGroup.email');
+        emailControl.valueChanges.subscribe(value =>
+                this.setValidationMessage(emailControl));
     }
 
     populateData() {
         this.customerForm.patchValue({
             firstName: "Sudhir",
             lastName: "Yadav",
-            // email: "adfas@gmail.com",
+            email: "adfas@gmail.com",
             sendCatalog: true
         });
     }
@@ -81,5 +88,14 @@ export class CustomerComponent implements OnInit {
     save() {
         console.log(this.customerForm);
         console.log('Saved: ' + JSON.stringify(this.customerForm.value));
+    }
+
+    setValidationMessage(emailControl: AbstractControl): void {
+        this.emailValidationMessage = '';
+        console.log('****');
+        if((emailControl.touched || emailControl.dirty) && emailControl.errors ){
+            this.emailValidationMessage = Object.keys(emailControl.errors).map(key =>
+                this.validationMessages[key ]).join(',')
+        }
     }
 }
